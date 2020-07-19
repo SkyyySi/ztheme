@@ -2,14 +2,14 @@
 A small and fast theme engine for zsh.
 
 ## How to install
-`git clone https://github.com/SkyyySi/ztheme/
-cd ztheme
-sudo make install`
+`git clone https://github.com/SkyyySi/ztheme/  
+cd ztheme  
+sudo make install`  
 
 Additionally, you have to add the following to your ~/.zshrc file in order to activate ztheme:
-`if [ -f "/usr/share/ztheme/plugins/ztheme.plugin.zsh" ];then
-	source "/usr/share/ztheme/plugins/ztheme.plugin.zsh"
-fi`
+`if [ -f "/usr/share/ztheme/plugins/ztheme.plugin.zsh" ];then  
+	source "/usr/share/ztheme/plugins/ztheme.plugin.zsh"  
+fi`  
 
 ## How to use
 simply type `ztheme <theme name>` into a terminal (for example: `ztheme agnoster` ). Your theme will be applied imediatly and it will be restored when you open a new terminal.
