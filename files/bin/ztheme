@@ -8,22 +8,39 @@ ITALIC="\033[3m"
 
 if [ "$1" = "" ]; then
 	echo "${RED}No theme selected!${NORMAL} "
-else
-	if [ -f "$HOME/.zsh/themes/$1.zshrc" ]; then
+else		
+	if [ -f "$ZTHEME_USER_THEME_DIR/$1.zshrc" ]; then
 		if [ -n "$RPROMPT" ]; then
-			export RPROMPT="";
+			RPROMPT="";
 		fi
+		source "$ZTHEME_USER_THEME_DIR/$1.zshrc";
 		
-		source "$HOME/.zsh/themes/$1.zshrc";
-		
-		if [ -n"$ZTHEME_CONFIG_DIR" ]; then
-			echo "#!/bin/zsh\nZSH_THEME='$1'" > "$ZTHEME_CONFIG_DIR.ztheme"
-		else
-			echo "#!/bin/zsh\nZSH_THEME='$1'" > "$HOME/.zsh/ztheme/.ztheme"
+	elif [ -f "$ZTHEME_SYSTEM_THEME_DIR/$1.zshrc" ]; then
+		if [ -n "$RPROMPT" ]; then
+			RPROMPT="";
 		fi
+		source "$ZTHEME_SYSTEM_THEME_DIR/$1.zshrc";
 		
-		echo "${GREEN}The theme was changed to ${BOLD}'$1'${GREEN}! ";
+	elif [ -f "$ZTHEME_USER_THEME_DIR/default.zshrc" ]; then
+		if [ -n "$RPROMPT" ]; then
+			RPROMPT="";
+		fi
+		source "$ZTHEME_USER_THEME_DIR/default.zshrc";
+		
+	elif [ -f "$ZTHEME_SYSTEM_THEME_DIR/default.zshrc" ]; then
+		if [ -n "$RPROMPT" ]; then
+			RPROMPT="";
+		fi
+		source "$ZTHEME_SYSTEM_THEME_DIR/default.zshrc";
+
 	else
-		echo "${RED}The provided theme name was invalid ! "
+		PROMPT="%m%# ";
+	fi
+	
+		if [ -f "$ZTHEME_USER_THEME_DIR/$1.zshrc" ]; then
+			echo "#!/bin/zsh\nZSH_THEME='$1'" > "$ZTHEME_USER_CONFIG_DIR/.ztheme"
+			echo "${GREEN}The theme was changed to ${BOLD}'$1'${GREEN}! ";
+		else
+			echo "${RED}The provided theme name was invalid ! "
 	fi
 fi
