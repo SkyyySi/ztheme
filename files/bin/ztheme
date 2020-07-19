@@ -1,0 +1,29 @@
+#!/bin/zsh
+
+NORMAL="\033[0m"
+BOLD="\033[1m"
+RED="\033[0;31m"
+GREEN="\033[0;32m"
+ITALIC="\033[3m"
+
+if [ "$1" = "" ]; then
+	echo "${RED}No theme selected!${NORMAL} "
+else
+	if [ -f "$HOME/.zsh/themes/$1.zshrc" ]; then
+		if [ -n "$RPROMPT" ]; then
+			export RPROMPT="";
+		fi
+		
+		source "$HOME/.zsh/themes/$1.zshrc";
+		
+		if [ -n"$ZTHEME_CONFIG_DIR" ]; then
+			echo "#!/bin/zsh\nZSH_THEME='$1'" > "$ZTHEME_CONFIG_DIR.ztheme"
+		else
+			echo "#!/bin/zsh\nZSH_THEME='$1'" > "$HOME/.zsh/ztheme/.ztheme"
+		fi
+		
+		echo "${GREEN}The theme was changed to ${BOLD}'$1'${GREEN}! ";
+	else
+		echo "${RED}The provided theme name was invalid ! "
+	fi
+fi
