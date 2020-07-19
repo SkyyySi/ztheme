@@ -40,6 +40,9 @@ else
 		if [ -f "$ZTHEME_USER_THEME_DIR/$1.zshrc" ]; then
 			echo "#!/bin/zsh\nZSH_THEME='$1'" > "$ZTHEME_USER_CONFIG_DIR/.ztheme"
 			echo "${GREEN}The theme was changed to ${BOLD}'$1'${GREEN}! ";
+		elif [ -f "$ZTHEME_SYSTEM_THEME_DIR/$1.zshrc" ]; then
+			echo "#!/bin/zsh\nZSH_THEME='$1'" > "$ZTHEME_USER_CONFIG_DIR/.ztheme"
+			echo "${GREEN}The theme was changed to ${BOLD}'$1'${GREEN}! ";
 		else
 			echo "${RED}The provided theme name was invalid ! "
 	fi
