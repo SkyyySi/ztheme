@@ -76,8 +76,8 @@ fi
 
 # Wirte the last used theme into the variable "$ZSH_THEME",
 # which gets used right below this here.
-if [ -f "$ZTHEME_USER_CONFIG_DIR.ztheme" ]; then
-	source "$ZTHEME_USER_CONFIG_DIR.ztheme";
+if [ -f "$ZTHEME_USER_CONFIG_DIR/.ztheme" ]; then
+	source "$ZTHEME_USER_CONFIG_DIR/.ztheme";
 fi
 
 # Restore the selected prompt theme, overwriting the fallback from above.
@@ -89,17 +89,26 @@ if [ -n "$ZSH_THEME" ]; then
 	fi
 fi
 
+### Source git plugin
+if [ -f "$ZTHEME_SYSTEM_PLUGIN_DIR/git.zsh" ]; then
+	source "$ZTHEME_SYSTEM_PLUGIN_DIR/git.zsh"
+fi
+
+if [ -f "$ZTHEME_SYSTEM_PLUGIN_DIR/git.plugin.zsh" ]; then
+	source "$ZTHEME_SYSTEM_PLUGIN_DIR/git.plugin.zsh"
+fi
+
 ### Info
 
 # Show the current theme when opening a new terminal
 # Only run these commands if the user is not logged in as root, as it is
 # very annoing to see this whenever you type "sudo -i"
 if [ ! $UID -eq 0 ]; then
-	if [ -f "ZTHEME_USER_THEME_DIR/$ZSH_THEME.zshrc" ]; then
+	if [ -f "$ZTHEME_USER_THEME_DIR/$ZSH_THEME.zshrc" ]; then
 		BOLD="\033[1m";
 		NORMAL="\033[0m";
 		echo "The current theme is: ${BOLD}'${ZSH_THEME}'${NORMAL}! \n";
-	elif [ -f "ZTHEME_SYSTEM_THEME_DIR/$ZSH_THEME.zshrc" ]; then
+	elif [ -f "$ZTHEME_SYSTEM_THEME_DIR/$ZSH_THEME.zshrc" ]; then
 		BOLD="\033[1m";
 		NORMAL="\033[0m";
 		echo "The current theme is: ${BOLD}'${ZSH_THEME}'${NORMAL}! \n";
@@ -107,6 +116,6 @@ if [ ! $UID -eq 0 ]; then
 		COLOR="\033[0;31m";
 		NORMAL="\033[0m";
 		BOLD="\033[1m";
-		echo "${COLOR}Invalid or no theme provided! \n${NORMAL}Please check that ${BOLD}'${ZTHEME_DIR}${ZSH_THEME}.zshrc'${NORMAL} exists and that ${BOLD}'${ZTHEME_CONFIG_DIR}.ztheme'${NORMAL} contains a valid theme name! \nLoading default theme... ";
+		echo "${COLOR}Invalid or no theme provided! \n${NORMAL}Please check that ${BOLD}'${ZTHEME_USER_THEME_DIR}/${ZSH_THEME}.zshrc'${NORMAL} and/or ${BOLD}'${ZTHEME_SYSTEM_THEME_DIR}/${ZSH_THEME}.zshrc'${NORMAL} exists and that ${BOLD}'${ZTHEME_USER_CONFIG_DIR}/.ztheme'${NORMAL} contains a valid theme name! \nLoading default theme... ";
 	fi
 fi
