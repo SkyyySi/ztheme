@@ -6,44 +6,95 @@ RED="\033[0;31m"
 GREEN="\033[0;32m"
 ITALIC="\033[3m"
 
-if [ "$1" = "" ]; then
-	echo "${RED}No theme selected!${NORMAL} "
-else		
-	if [ -f "$ZTHEME_USER_THEME_DIR/$1.zshrc" ]; then
-		if [ -n "$RPROMPT" ]; then
-			RPROMPT="";
-		fi
-		source "$ZTHEME_USER_THEME_DIR/$1.zshrc";
-		
-	elif [ -f "$ZTHEME_SYSTEM_THEME_DIR/$1.zshrc" ]; then
-		if [ -n "$RPROMPT" ]; then
-			RPROMPT="";
-		fi
-		source "$ZTHEME_SYSTEM_THEME_DIR/$1.zshrc";
-		
-	elif [ -f "$ZTHEME_USER_THEME_DIR/default.zshrc" ]; then
-		if [ -n "$RPROMPT" ]; then
-			RPROMPT="";
-		fi
-		source "$ZTHEME_USER_THEME_DIR/default.zshrc";
-		
-	elif [ -f "$ZTHEME_SYSTEM_THEME_DIR/default.zshrc" ]; then
-		if [ -n "$RPROMPT" ]; then
-			RPROMPT="";
-		fi
-		source "$ZTHEME_SYSTEM_THEME_DIR/default.zshrc";
-
-	else
-		PROMPT="%m%# ";
-	fi
+if [ -z "$1" ]; then
+	echo "${RED}No prompt/rprompt/plugin selected!${NORMAL} ";
+else
+	if [ "$1" = "prompt" ]; then
+		if [ -f "$ZTHEME_USER_THEME_DIR/$2.zshrc" ]; then
+			if [ -n "$RPROMPT" ]; then
+				RPROMPT="";
+			fi
+			source "$ZTHEME_USER_THEME_DIR/$2.zshrc";
+			
+		elif [ -f "$ZTHEME_SYSTEM_THEME_DIR/$2.zshrc" ]; then
+			if [ -n "$RPROMPT" ]; then
+				RPROMPT="";
+			fi
+			source "$ZTHEME_SYSTEM_THEME_DIR/$2.zshrc";
+			
+		elif [ -f "$ZTHEME_USER_THEME_DIR/default.zshrc" ]; then
+			if [ -n "$RPROMPT" ]; then
+				RPROMPT="";
+			fi
+			source "$ZTHEME_USER_THEME_DIR/default.zshrc";
+			
+		elif [ -f "$ZTHEME_SYSTEM_THEME_DIR/default.zshrc" ]; then
+			if [ -n "$RPROMPT" ]; then
+				RPROMPT="";
+			fi
+			source "$ZTHEME_SYSTEM_THEME_DIR/default.zshrc";
 	
-		if [ -f "$ZTHEME_USER_THEME_DIR/$1.zshrc" ]; then
-			echo "#!/bin/zsh\nZSH_THEME='$1'" > "$ZTHEME_USER_CONFIG_DIR/.ztheme"
-			echo "${GREEN}The theme was changed to ${BOLD}'$1'${GREEN}! ";
-		elif [ -f "$ZTHEME_SYSTEM_THEME_DIR/$1.zshrc" ]; then
-			echo "#!/bin/zsh\nZSH_THEME='$1'" > "$ZTHEME_USER_CONFIG_DIR/.ztheme"
-			echo "${GREEN}The theme was changed to ${BOLD}'$1'${GREEN}! ";
 		else
-			echo "${RED}The provided theme name was invalid ! "
+			PROMPT="%m%# ";
+		fi
+		
+			if [ -f "$ZTHEME_USER_THEME_DIR/$2.zshrc" ]; then
+				echo "#!/bin/zsh\nZTHEME_PROMPT='$2'" > "$ZTHEME_USER_CONFIG_DIR/.ztheme_prompt";
+				echo "${GREEN}The theme was changed to ${BOLD}'$2'${GREEN}! ";
+			elif [ -f "$ZTHEME_SYSTEM_THEME_DIR/$2.zshrc" ]; then
+				echo "#!/bin/zsh\nZTHEME_PROMPT='$2'" > "$ZTHEME_USER_CONFIG_DIR/.ztheme_prompt";
+				echo "${GREEN}The theme was changed to ${BOLD}'$2'${GREEN}! ";
+			else
+				echo "${RED}The provided theme name was invalid! ";
+		fi
+	elif [ "$1" = "plugin" ]; then
+		if [ "$2" = "on" ]; then
+			if ! grep -q -w "ZTHEME_PLUGINS=(" "$ZTHEME_USER_CONFIG_DIR/.ztheme_plugins"; then
+				sed -i '1 i\ZTHEME_PLUGINS=(' "$ZTHEME_USER_CONFIG_DIR/.ztheme_plugins";
+			elif ! grep -q -w ")" "$ZTHEME_USER_CONFIG_DIR/.ztheme_plugins"; then
+				echo ")" >> "$ZTHEME_USER_CONFIG_DIR/.ztheme_plugins";
+			elif grep -q -w "$3" "$ZTHEME_USER_CONFIG_DIR/.ztheme_plugins"; then
+				echo "${RED}The plugin ${BOLD}'$3'${RED} is already enabled! ";
+			fi
+			if [ -d "$ZTHEME_USER_PLUGIN_DIR/$3" ]; then
+				source "$ZTHEME_USER_PLUGIN_DIR/$3/"*.zsh;
+				sed -i "$ d" "$ZTHEME_USER_CONFIG_DIR/.ztheme_plugins";
+				echo "$3\n)" >> "$ZTHEME_USER_CONFIG_DIR/.ztheme_plugins";
+				echo "${GREEN}The plugin ${BOLD}'$3'${GREEN} was enabled successfully! ";
+			elif [ -f "$ZTHEME_USER_PLUGIN_DIR/"$3.plugin.zsh ]; then
+				source "$ZTHEME_USER_PLUGIN_DIR/"$3.plugin.zsh;
+				sed -i "$ d" "$ZTHEME_USER_CONFIG_DIR/.ztheme_plugins";
+				echo "$3\n)" >> "$ZTHEME_USER_CONFIG_DIR/.ztheme_plugins";
+				echo "${GREEN}The plugin ${BOLD}'$3'${GREEN} was enabled successfully! ";
+			elif [ -d "$ZTHEME_SYSTEM_PLUGIN_DIR/$3" ]; then
+				source "$ZTHEME_SYSTEM_PLUGIN_DIR/$3/"*.zsh;
+				sed -i "$ d" "$ZTHEME_USER_CONFIG_DIR/.ztheme_plugins";
+				echo "$3\n)" >> "$ZTHEME_USER_CONFIG_DIR/.ztheme_plugins";
+				echo "${GREEN}The plugin ${BOLD}'$3'${GREEN} was enabled successfully! ";
+			elif [ -f "$ZTHEME_SYSTEM_PLUGIN_DIR/"$3.plugin.zsh ]; then
+				source "$ZTHEME_SYSTEM_PLUGIN_DIR/"$3.plugin.zsh;
+				sed -i "$ d" "$ZTHEME_USER_CONFIG_DIR/.ztheme_plugins";
+				echo "$3\n)" >> "$ZTHEME_USER_CONFIG_DIR/.ztheme_plugins";
+				echo "${GREEN}The plugin ${BOLD}'$3'${GREEN} was enabled successfully! ";
+			else
+				echo "${RED}The provided plugin name was invalid ! ";
+			fi
+		elif [ "$2" = "off" ]; then
+			if [ "$3" = ")" ]; then
+				echo "${RED}The provided plugin name was invalid or the plugin is already disabled! ";
+			elif [ "$3" = "ZTHEM*" ]; then
+				echo "${RED}The provided plugin name was invalid or the plugin is already disabled! ";
+			else
+				if grep -q -w "$3" "$ZTHEME_USER_CONFIG_DIR/.ztheme_plugins"; then
+					sed "/$3/d" -i "$ZTHEME_USER_CONFIG_DIR/.ztheme_plugins";
+					echo "${GREEN}The plugin ${BOLD}'$3'${GREEN} was disabled successfully! ";
+					source "$ZTHEME_USER_CONFIG_DIR/.ztheme_plugins";
+				else
+					echo "${RED}The provided plugin name was invalid or the plugin is already disabled! ";
+				fi
+			fi
+		fi
+	else
+		echo "${RED}The provided command was invalid ! ";
 	fi
 fi
